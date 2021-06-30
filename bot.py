@@ -7,11 +7,13 @@ import urllib.request
 import webbrowser
 import http.client, urllib
 from win10toast_click import ToastNotifier
-
-
-# TODO: 
-#       Save source code as file when one is found, so that we can improve the bot
-#       Parse the link to form and open it automatically (try to bring attention to it in OS)
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import Select
+from selenium.webdriver.chrome.options import Options
+from selenium.common.exceptions import NoSuchElementException
 
 
 LS = 0
@@ -100,37 +102,27 @@ def notify(toaster, building):
     return
 
 
-def ls_apply(content):
-    file_name = "living_science_form_" + datetime.now().strftime("%d-%m-%Y_%H-%M-%S")
+def ls_complete_form(driver):
+    # TODO: Click on email button
 
-    try:
-        path = "http://reservation.livingscience.ch/" + re.search("dynasite\.cfm\?cmd=cimmotool\_immotool\_immotool\_download(.*)\">", content).group(0)[:-2]
-    except:
-        print("Could not find Living Science application form url")
-        return
+    # TODO: Complete form
 
-    try:
-        print("Downloading application form at [" + path + "]")
-        download_file(path, file_name, "pdf")
-    except:
-        print("Could not download Living Science application form")
+    # TODO: Click on captcha button
 
-    try:
-        webbrowser.get('chrome').open(path)
-    except:
-        print("Could not open Living Science application form in Chrome")
+    # TODO: Click on send button
 
-    # TODO: Send email?
+    return
 
-    # Testing the email href
-    try:
-        webbrowser.get('chrome').open("http://reservation.livingscience.ch/" + re.search("cmd=cimmotool_immotool_immotool_viewdet(.*)\"\ ", content).group(0)[:-2])
-    except:
-        print("Testing 1: Failed")
-    try:
-        webbrowser.get('chrome').open("http://reservation.livingscience.ch/dynasite\.cfm\?" + re.search("cmd=cimmotool_immotool_immotool_viewdet(.*)\"\ ", content).group(0)[:-2])
-    except:
-        print("Testing 2: Failed")
+
+def ls_apply():
+    driver = webdriver.Chrome(chrome_path)
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_argument("--disable-popup-blocking")
+
+    driver.maximize_window()
+    driver.get("http://reservation.livingscience.ch/wohnen")
+
+    ls_complete_form(driver)
 
     return
 
@@ -171,7 +163,7 @@ def main():
     webbrowser.register('chrome',
         None,
         webbrowser.BackgroundBrowser("C://Program Files//Google//Chrome//Application//chrome.exe"))
-    
+
     found = []
 
     while(True):
@@ -182,7 +174,7 @@ def main():
             if id not in found:
                 # TODO: If starting date is greater than August
                 if (True):
-                    ls_apply(out_content[0])
+                    ls_apply()
                 notify(toaster, LS)
                 write_to_file(out_content[0], "living_science_src_" + datetime.now().strftime("%d-%m-%Y_%H-%M-%S"), "html")
                 found.extend([id])
