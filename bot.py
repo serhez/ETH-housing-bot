@@ -2,6 +2,7 @@ import os
 import re
 import time
 from datetime import datetime
+import platform
 import requests
 import urllib.request
 import webbrowser
@@ -22,7 +23,11 @@ SV_FREI_COUNT = 1
 CHECK_FREQUENCY = 1
 BUILDING_STRINGS = ["LIVING SCIENCE", "STUDENT VILLAGE"]
 URLS = ["http://reservation.livingscience.ch/en/living", "https://studentvillage.ch/en/accommodation/"]
-CHROME_DRIVER = os.getcwd() + "/chromedriver"
+CHROME_DRIVER = ""
+if platform.system() == "Windows":
+    CHROME_DRIVER = os.getcwd() + "/chromedriver.exe"
+else:
+    CHROME_DRIVER = os.getcwd() + "/chromedriver"
 
 PUSHOVER_APP_TOKEN = "axpsbeqx8zqtqf1t2n3fxgrftyhzr5"
 PUSHOVER_USER_KEY = "uez8re7h4fz7t9t3fze12ag5gorpyy"
@@ -102,27 +107,304 @@ def notify(toaster, building):
     return
 
 
-def ls_complete_form(driver):
-    # TODO: Click on email button
+def ls_complete_form(driver, tab_handle, submit):
+    # SECTION: Switch to correct tab
 
-    # TODO: Complete form
+    driver.switch_to.window(tab_handle)
 
-    # TODO: Click on captcha button
+    # SECTION: Click on email button
 
-    # TODO: Click on send button
+    for i in range(10):
+        try:
+            driver.find_element_by_xpath("/html/body/div[1]/div[4]/div[2]/div[2]/div[1]/div/div[2]/div/div/div/div/div[3]/div[2]/span[11]/a[2]").click()
+            break
+        except NoSuchElementException as e:
+            print('Email button - Retry in 0.5 second')
+            time.sleep(0.5)
+    else:
+        raise e
+
+    # SECTION: Complete form
+
+    # Title
+    for i in range(10):
+        try:
+            Select(driver.find_element_by_xpath("/html/body/div[1]/div[2]/div/div[2]/div[2]/form/div[2]/div[1]/div/select")).select_by_value("Herr")
+            break
+        except NoSuchElementException as e:
+            print('Title - Retry in 0.5 second')
+            time.sleep(0.5)
+    else:
+        raise 
+
+    # Surname
+    for i in range(10):
+        try:
+            driver.find_element_by_xpath("/html/body/div[1]/div[2]/div/div[2]/div[2]/form/div[2]/div[2]/input").send_keys("Hernandez Gutierrez")
+            break
+        except NoSuchElementException as e:
+            print('Surname - Retry in 0.5 second')
+            time.sleep(0.5)
+    else:
+        raise e
+
+    # First name
+    for i in range(10):
+        try:
+            driver.find_element_by_xpath("/html/body/div[1]/div[2]/div/div[2]/div[2]/form/div[2]/div[3]/input").send_keys("Sergio Christian")
+            break
+        except NoSuchElementException as e:
+            print('First name - Retry in 0.5 second')
+            time.sleep(0.5)
+    else:
+        raise e
+
+    # Street
+    for i in range(10):
+        try:
+            driver.find_element_by_xpath("/html/body/div[1]/div[2]/div/div[2]/div[2]/form/div[2]/div[4]/div[1]/input").send_keys("Calle Los Helechos")
+            break
+        except NoSuchElementException as e:
+            print('Street - Retry in 0.5 second')
+            time.sleep(0.5)
+    else:
+        raise e
+
+    # Street number
+    for i in range(10):
+        try:
+            driver.find_element_by_xpath("/html/body/div[1]/div[2]/div/div[2]/div[2]/form/div[2]/div[4]/div[3]/input").send_keys("13")
+            break
+        except NoSuchElementException as e:
+            print('Street number - Retry in 0.5 second')
+            time.sleep(0.5)
+    else:
+        raise e
+
+    # ZIP
+    for i in range(10):
+        try:
+            driver.find_element_by_xpath("/html/body/div[1]/div[2]/div/div[2]/div[2]/form/div[2]/div[5]/div[1]/input").send_keys("38292")
+            break
+        except NoSuchElementException as e:
+            print('ZIP - Retry in 0.5 second')
+            time.sleep(0.5)
+    else:
+        raise e
+
+    # Place
+    for i in range(10):
+        try:
+            driver.find_element_by_xpath("/html/body/div[1]/div[2]/div/div[2]/div[2]/form/div[2]/div[5]/div[3]/input").send_keys("Santa Cruz de Tenerife")
+            break
+        except NoSuchElementException as e:
+            print('Place - Retry in 0.5 second')
+            time.sleep(0.5)
+    else:
+        raise e
+
+    # Country
+    for i in range(10):
+        try:
+            Select(driver.find_element_by_xpath("/html/body/div[1]/div[2]/div/div[2]/div[2]/form/div[2]/div[6]/div/select")).select_by_value("ES Spanien")
+            break
+        except NoSuchElementException as e:
+            print('Country - Retry in 0.5 second')
+            time.sleep(0.5)
+    else:
+        raise e
+
+    # Email
+    for i in range(10):
+        try:
+            driver.find_element_by_xpath("/html/body/div[1]/div[2]/div/div[2]/div[2]/form/div[2]/div[7]/input").send_keys("contact.sergiohernandez@gmail.com")
+            break
+        except NoSuchElementException as e:
+            print('Email - Retry in 0.5 second')
+            time.sleep(0.5)
+    else:
+        raise e
+
+    # Telephone
+    for i in range(10):
+        try:
+            driver.find_element_by_xpath("/html/body/div[1]/div[2]/div/div[2]/div[2]/form/div[2]/div[8]/input").send_keys("0034650802397")
+            break
+        except NoSuchElementException as e:
+            print('Telephone - Retry in 0.5 second')
+            time.sleep(0.5)
+    else:
+        raise e
+
+    # Date of birth
+    for i in range(10):
+        try:
+            driver.find_element_by_xpath("/html/body/div[1]/div[2]/div/div[2]/div[2]/form/div[2]/div[9]/input").send_keys("02.06.1997")
+            break
+        except NoSuchElementException as e:
+            print('Date of birth - Retry in 0.5 second')
+            time.sleep(0.5)
+    else:
+        raise e
+
+    # Nationality
+    for i in range(10):
+        try:
+            Select(driver.find_element_by_xpath("/html/body/div[1]/div[2]/div/div[2]/div[2]/form/div[2]/div[10]/div/select")).select_by_value("ES Spanien")
+            break
+        except NoSuchElementException as e:
+            print('Nationality - Retry in 0.5 second')
+            time.sleep(0.5)
+    else:
+        raise e
+
+    # Language
+    for i in range(10):
+        try:
+            Select(driver.find_element_by_xpath("/html/body/div[1]/div[2]/div/div[2]/div[2]/form/div[2]/div[11]/div/select")).select_by_value("ES Spanisch")
+            break
+        except NoSuchElementException as e:
+            print('Language - Retry in 0.5 second')
+            time.sleep(0.5)
+    else:
+        raise e
+
+    # Income
+    for i in range(10):
+        try:
+            driver.find_element_by_xpath("/html/body/div[1]/div[2]/div/div[2]/div[2]/form/div[2]/div[12]/input").send_keys("0")
+            break
+        except NoSuchElementException as e:
+            print('Income - Retry in 0.5 second')
+            time.sleep(0.5)
+    else:
+        raise e
+
+    # Civil status
+    for i in range(10):
+        try:
+            Select(driver.find_element_by_xpath("/html/body/div[1]/div[2]/div/div[2]/div[2]/form/div[2]/div[13]/div/select")).select_by_value("ledig")
+            break
+        except NoSuchElementException as e:
+            print('Civil status - Retry in 0.5 second')
+            time.sleep(0.5)
+    else:
+        raise e
+
+    # Correspondece
+    for i in range(10):
+        try:
+            Select(driver.find_element_by_xpath("/html/body/div[1]/div[2]/div/div[2]/div[2]/form/div[2]/div[14]/div/select")).select_by_value("Englisch")
+            break
+        except NoSuchElementException as e:
+            print('Correspondence - Retry in 0.5 second')
+            time.sleep(0.5)
+    else:
+        raise e
+
+    # Degree
+    for i in range(10):
+        try:
+            driver.find_element_by_xpath("/html/body/div[1]/div[2]/div/div[2]/div[2]/form/div[5]/div[1]/input").send_keys("Masters in Computer Science")
+            break
+        except NoSuchElementException as e:
+            print('Degree - Retry in 0.5 second')
+            time.sleep(0.5)
+    else:
+        raise e
+
+    # Faculty
+    for i in range(10):
+        try:
+            driver.find_element_by_xpath("/html/body/div[1]/div[2]/div/div[2]/div[2]/form/div[5]/div[3]/input").send_keys("Department of Computer Science")
+            break
+        except NoSuchElementException as e:
+            print('Faculty - Retry in 0.5 second')
+            time.sleep(0.5)
+    else:
+        raise e
+
+    # Start of studies
+    for i in range(10):
+        try:
+            driver.find_element_by_xpath("/html/body/div[1]/div[2]/div/div[2]/div[2]/form/div[5]/div[4]/input").send_keys("21.09.2021")
+            break
+        except NoSuchElementException as e:
+            print('Start of studies - Retry in 0.5 second')
+            time.sleep(0.5)
+    else:
+        raise e
+
+    # End of study
+    for i in range(10):
+        try:
+            driver.find_element_by_xpath("/html/body/div[1]/div[2]/div/div[2]/div[2]/form/div[5]/div[5]/input").send_keys("20.09.2023")
+            break
+        except NoSuchElementException as e:
+            print('End of study - Retry in 0.5 second')
+            time.sleep(0.5)
+    else:
+        raise e
+
+    # Rental agreement
+    for i in range(10):
+        try:
+            driver.find_element_by_xpath("/html/body/div[1]/div[2]/div/div[2]/div[2]/form/div[4]/div[1]/div/input").click()
+            break
+        except NoSuchElementException as e:
+            print('Rental agreement - Retry in 0.5 second')
+            time.sleep(0.5)
+    else:
+        raise e
+
+    # House rules
+    for i in range(10):
+        try:
+            driver.find_element_by_xpath("/html/body/div[1]/div[2]/div/div[2]/div[2]/form/div[4]/div[2]/div/input").click()
+            break
+        except NoSuchElementException as e:
+            print('House rules - Retry in 0.5 second')
+            time.sleep(0.5)
+    else:
+        raise e
+
+    # Confirmation
+    for i in range(10):
+        try:
+            driver.find_element_by_xpath("/html/body/div[1]/div[2]/div/div[2]/div[2]/form/div[4]/div[3]/div/input").click()
+            break
+        except NoSuchElementException as e:
+            print('Confirmation - Retry in 0.5 second')
+            time.sleep(0.5)
+    else:
+        raise e
+
+    # SECTION: Submit
+
+    if submit:
+        # TODO: Click on captcha button
+        # TODO: Click on send button: /html/body/div[1]/div[2]/div/div[2]/div[2]/form/div[5]/div[11]/button
+        pass
 
     return
 
 
 def ls_apply():
-    driver = webdriver.Chrome(chrome_path)
+    driver = webdriver.Chrome(CHROME_DRIVER)
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_argument("--disable-popup-blocking")
 
     driver.maximize_window()
     driver.get("http://reservation.livingscience.ch/wohnen")
+    driver.execute_script('''window.open("http://www.livingscience.ch/kontakt-studentenzimmer-zuerich/?L=0","_blank");''')
 
     ls_complete_form(driver)
+
+    ls_complete_form(driver, driver.window_handles[0], True)
+    ls_complete_form(driver, driver.window_handles[1], False)
+
+    time.sleep(60)
+    driver.close()
 
     return
 
