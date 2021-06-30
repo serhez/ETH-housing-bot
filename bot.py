@@ -122,7 +122,15 @@ def ls_complete_form(driver, tab_handle, submit):
             print('Email button - Retry in 0.5 second')
             time.sleep(0.5)
     else:
-        raise e
+        for i in range(10):
+            try:
+                driver.find_element_by_css_selector("#cimmotool_immotool_immotool_search > div.list.scroll > div.row.status1 > span.icons > a.ajaxloader").click()
+                break
+            except NoSuchElementException as e:
+                print('Email button - Retry in 0.5 second')
+                time.sleep(0.5)
+        else:
+            raise e
 
     # SECTION: Complete form
 
