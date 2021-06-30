@@ -25,7 +25,7 @@ BUILDING_STRINGS = ["LIVING SCIENCE", "STUDENT VILLAGE"]
 URLS = ["http://reservation.livingscience.ch/en/living", "https://studentvillage.ch/en/accommodation/"]
 CHROME_DRIVER = ""
 if platform.system() == "Windows":
-    CHROME_DRIVER = os.getcwd() + "/chromedriver.exe"
+    CHROME_DRIVER = os.getcwd() + "\chromedriver.exe"
 else:
     CHROME_DRIVER = os.getcwd() + "/chromedriver"
 
@@ -390,9 +390,33 @@ def ls_complete_form(driver, tab_handle, submit):
     # SECTION: Submit
 
     if submit:
-        # TODO: Click on captcha button
-        # TODO: Click on send button: /html/body/div[1]/div[2]/div/div[2]/div[2]/form/div[5]/div[11]/button
-        pass
+        # Wait to not trigger captcha
+        time.sleep(1.5)
+
+        # Captcha
+        for i in range(10):
+            try:
+                driver.find_elements_by_class_name("g-recaptcha")[0].find_element_by_tag_name('iframe').click()
+                break
+            except NoSuchElementException as e:
+                print('Captcha - Retry in 0.5 second')
+                time.sleep(0.5)
+        else:
+            raise e
+
+        # Wait for captcha
+        time.sleep(1)
+
+        # Submit button
+        for i in range(10):
+            try:
+                driver.find_element_by_xpath("/html/body/div[1]/div[2]/div/div[2]/div[2]/form/div[5]/div[11]/button").click()
+                break
+            except NoSuchElementException as e:
+                print('Submit button - Retry in 0.5 second')
+                time.sleep(0.5)
+        else:
+            raise e
 
     return
 
@@ -401,6 +425,8 @@ def ls_apply():
     driver = webdriver.Chrome(CHROME_DRIVER)
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_argument("--disable-popup-blocking")
+    chrome_options.add_argument('--disable-notifications')
+    chrome_options.add_argument("--mute-audio")
 
     driver.maximize_window()
     driver.get("http://reservation.livingscience.ch/wohnen")
@@ -408,13 +434,17 @@ def ls_apply():
 
     ls_complete_form(driver)
 
-    ls_complete_form(driver, driver.window_handles[0], True)
-    ls_complete_form(driver, driver.window_handles[1], False)
+    try:
+        ls_complete_form(driver, driver.window_handles[0], True)
+        ls_complete_form(driver, driver.window_handles[1], False)
+    except NoSuchElementException:
+        driver.close()
+        return False
 
     time.sleep(60)
     driver.close()
 
-    return
+    return True
 
 
 def get_ls_ids(content):
@@ -460,16 +490,17 @@ def main():
         # Living Science (LS)
         out_content = []
         if is_ls_available(out_content):
-            id = get_ls_ids(out_content[0])
-            if id not in found:
-                # TODO: If starting date is greater than August
-                if (True):
-                    ls_apply()
-                notify(toaster, LS)
-                write_to_file(out_content[0], "living_science_src_" + datetime.now().strftime("%d-%m-%Y_%H-%M-%S"), "html")
-                found.extend([id])
-            else:
-                print("Did not notify/apply to a room that already was found")
+            # id = get_ls_ids(out_content[0])
+            # if id not in found:
+                # TODO: If starting date is greater than August and not > than 2 people in the flat
+            if (True):
+                if ls_apply():
+                    return
+            notify(toaster, LS)
+            write_to_file(out_content[0], "living_science_src_" + datetime.now().strftime("%d-%m-%Y_%H-%M-%S"), "html")
+            found.extend([id])
+            # else:
+                # print("Did not notify/apply to a room that already was found")
                             
         # Student Village (SV)
         out_content = []
