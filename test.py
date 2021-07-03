@@ -1,56 +1,59 @@
-import platform
 import os
+import platform
 from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import Select
 import time
-from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import NoSuchElementException
 
 
-# TODO: Abrir una pagina que lo intente hacer automatico y otra que solo auto rellene
+CHROME_DRIVER = ""
+if platform.system() == "Windows":
+    CHROME_DRIVER = os.getcwd() + "\\chromedriver-win.exe"
+elif platform.system() == "Darwin":
+    CHROME_DRIVER = os.getcwd() + "/chromedriver-mac"
+elif platform.system() == "Linux":
+    CHROME_DRIVER = os.getcwd() + "/chromedriver-linux"
+
 
 def test(driver, tab_handle, name):
     driver.switch_to.window(tab_handle)
 
     # Free text
-    for i in range(10):
+    for _ in range(10):
         try:
             driver.find_element_by_xpath("/html/body/div[1]/div[5]/div/div[2]/form/fieldset/div[2]/input").send_keys(name)
             break
-        except NoSuchElementException as e:
+        except NoSuchElementException:
             print('Name - Retry in 0.5 second')
             time.sleep(0.5)
     else:
-        raise e
+        raise NoSuchElementException
 
     # Dropdowns
     # Select(driver.find_element_by_xpath("/html/body/div[1]/div[5]/div/div[2]/form/fieldset/div[1]/select")).select_by_index(1)
-    for i in range(10):
+    for _ in range(10):
         try:
             Select(driver.find_element_by_xpath("/html/body/div[1]/div[5]/div/div[2]/form/fieldset/div[1]/select")).select_by_value("Herr")
             break
-        except NoSuchElementException as e:
+        except NoSuchElementException:
             print('Title - Retry in 0.5 second')
             time.sleep(0.5)
     else:
-        raise e
+        raise NoSuchElementException
 
     # Checkboxes
-    for i in range(10):
+    for _ in range(10):
         try:
             driver.find_element_by_xpath("/html/body/div[1]/div[5]/div/div[2]/form/fieldset/div[9]/fieldset/div/div/input").click()
             break
-        except NoSuchElementException as e:
+        except NoSuchElementException:
             print('License - Retry in 0.5 second')
             time.sleep(0.5)
     else:
-        raise e
+        raise NoSuchElementException
 
     # Buttons
-    # for i in range(10):
+    # for _ in range(10):
     #     try:
     #         driver.find_element_by_xpath("").click()
     #         break
@@ -58,10 +61,9 @@ def test(driver, tab_handle, name):
     #         print('Retry in 0.5 second')
     #         time.sleep(0.5)
     # else:
-    #     raise e
+    #     raise NoSuchElementException
 
-chrome_path = os.getcwd() + "\chromedriver.exe"
-driver = webdriver.Chrome(chrome_path)
+driver = webdriver.Chrome(CHROME_DRIVER)
 
 chrome_options = webdriver.ChromeOptions()
 chrome_options.add_argument("--disable-popup-blocking")
@@ -83,7 +85,7 @@ for i in range(10):
         print('Captcha - Retry in 0.5 second')
         time.sleep(0.5)
 else:
-    raise e
+    raise NoSuchElementException
 
 
 # driver.execute_script('''window.open("http://www.livingscience.ch/kontakt-studentenzimmer-zuerich/?L=0","_blank");''')
