@@ -16,6 +16,7 @@ LS = 0
 SV = 1
 SV_FREI_COUNT = 1
 CHECK_FREQUENCY = 1
+ROOM_FOUND_WAIT = 60 * 10
 BUILDING_STRINGS = ["LIVING SCIENCE", "STUDENT VILLAGE"]
 URLS = ["http://reservation.livingscience.ch/en/living", "https://studentvillage.ch/en/accommodation/"]
 
@@ -432,16 +433,16 @@ def ls_apply():
 
     driver.maximize_window()
     driver.get("http://reservation.livingscience.ch/wohnen")
-    driver.execute_script('''window.open("http://www.livingscience.ch/kontakt-studentenzimmer-zuerich/?L=0","_blank");''')
+    # driver.execute_script('''window.open("http://reservation.livingscience.ch/wohnen","_blank");''')
 
     try:
-        ls_complete_form(driver, driver.window_handles[0], True)
-        ls_complete_form(driver, driver.window_handles[1], False)
+        ls_complete_form(driver, driver.window_handles[0], False)
+        # ls_complete_form(driver, driver.window_handles[1], True)
     except NoSuchElementException:
         driver.close()
         return False
 
-    time.sleep(60)
+    time.sleep(ROOM_FOUND_WAIT)
     driver.close()
 
     return True
