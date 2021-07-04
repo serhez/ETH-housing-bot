@@ -7,18 +7,17 @@ from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.common.action_chains import ActionChains
 from selenium.common.exceptions import NoSuchElementException
 import speech_recognition as sr 
 
 
 CHROME_DRIVER = ""
 if platform.system() == "Windows":
-    CHROME_DRIVER = os.getcwd() + "\\chromedriver-win.exe"
+    CHROME_DRIVER = os.getcwd() + "\\drivers\\chromedriver-win.exe"
 elif platform.system() == "Darwin":
-    CHROME_DRIVER = os.getcwd() + "/chromedriver-mac"
+    CHROME_DRIVER = os.getcwd() + "/drivers/chromedriver-mac"
 elif platform.system() == "Linux":
-    CHROME_DRIVER = os.getcwd() + "/chromedriver-linux"
+    CHROME_DRIVER = os.getcwd() + "/drivers/chromedriver-linux"
 
 AUDIO_TO_TEXT_DELAY = 10
 AUDIOS_PATH = os.getcwd() + "audios/"

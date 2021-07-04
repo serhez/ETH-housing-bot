@@ -21,11 +21,11 @@ URLS = ["http://reservation.livingscience.ch/en/living", "https://studentvillage
 
 CHROME_DRIVER = ""
 if platform.system() == "Windows":
-    CHROME_DRIVER = os.getcwd() + "\\chromedriver-win.exe"
+    CHROME_DRIVER = os.getcwd() + "\\drivers\\chromedriver-win.exe"
 elif platform.system() == "Darwin":
-    CHROME_DRIVER = os.getcwd() + "/chromedriver-mac"
+    CHROME_DRIVER = os.getcwd() + "/drivers/chromedriver-mac"
 elif platform.system() == "Linux":
-    CHROME_DRIVER = os.getcwd() + "/chromedriver-linux"
+    CHROME_DRIVER = os.getcwd() + "/drivers/chromedriver-linux"
 
 PUSHOVER_APP_TOKEN = "axpsbeqx8zqtqf1t2n3fxgrftyhzr5"
 PUSHOVER_USER_KEY = "uez8re7h4fz7t9t3fze12ag5gorpyy"
@@ -495,18 +495,15 @@ def main():
         # Living Science (LS)
         out_content = []
         if is_ls_available(out_content):
-            # id = get_ls_ids(out_content[0])
-            # if id not in found:
-                # TODO: If starting date is greater than August and not > than 2 people in the flat
-            if (True):
-                if ls_apply():
-                    return
-            notify(LS)
-            write_to_file(out_content[0], "living_science_src_" + datetime.now().strftime("%d-%m-%Y_%H-%M-%S"), "html")
-            found.extend([id])
-            # else:
-                # print("Did not notify/apply to a room that already was found")
-                            
+            id = get_ls_ids(out_content[0])
+            if id == "" or id not in found:
+                notify(LS)
+                ls_apply()
+                write_to_file(out_content[0], "data/living_science_src_" + datetime.now().strftime("%d-%m-%Y_%H-%M-%S"), "html")
+                found.extend([id])
+            else:
+                print("Did not notify/apply to a room that already was found")
+
         # Student Village (SV)
         out_content = []
         if is_sv_available(out_content):
