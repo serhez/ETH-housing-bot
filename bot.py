@@ -110,30 +110,45 @@ def notify(building):
     return
 
 
-def ls_complete_form(driver, tab_handle, submit):
+def ls_complete_form(driver, submit):
     # SECTION: Switch to correct tab
 
-    driver.switch_to.window(tab_handle)
+    # driver.switch_to.window(tab_handle)
 
     # SECTION: Click on email button
-
-    for _ in range(10):
+    for _ in range(2):
         try:
-            driver.find_element_by_xpath("/html/body/div[1]/div[4]/div[2]/div[2]/div[1]/div/div[2]/div/div/div/div/div[3]/div[2]/span[11]/a[2]").click()
+            driver.find_element_by_xpath("/html/body/div/div[4]/div[2]/div[2]/div[1]/div/div[2]/div/div/div/div/div[3]/div[2]/span[11]/a[2]").click()
             break
         except NoSuchElementException:
-            print('Email button - Retry in 0.5 second')
-            time.sleep(0.5)
+                print('Email button (1) - Retry in 0.25 second')
+                time.sleep(0.25)
     else:
-        for _ in range(10):
+        for _ in range(1):
             try:
-                driver.find_element_by_css_selector("#cimmotool_immotool_immotool_search > div.list.scroll > div.row.status1 > span.icons > a.ajaxloader").click()
+                driver.find_element_by_xpath('//*[@id="cimmotool_immotool_immotool_search"]/div[3]/div[2]/span[11]/a[2]').click()
                 break
             except NoSuchElementException:
-                print('Email button - Retry in 0.5 second')
-                time.sleep(0.5)
+                    print('Email button (1) - Retry in 0.25 second')
+                    time.sleep(0.25)
         else:
-            raise NoSuchElementException
+            for _ in range(1):
+                try:
+                    driver.find_element_by_xpath("/html/body/div[1]/div[4]/div[2]/div[2]/div[1]/div/div[2]/div/div/div/div/div[3]/div[2]/span[11]/a[2]").click()
+                    break
+                except NoSuchElementException:
+                    print('Email button (2) - Retry in 0.25 second')
+                    time.sleep(0.25)
+            else:
+                for _ in range(10):
+                    try:
+                        driver.find_element_by_css_selector("#cimmotool_immotool_immotool_search > div.list.scroll > div.row.status1 > span.icons > a.ajaxloader").click()
+                        break
+                    except NoSuchElementException:
+                        print('Email button (3) - Retry in 0.5 second')
+                        time.sleep(0.5)
+                else:
+                    raise NoSuchElementException
 
     # SECTION: Complete form
 
@@ -424,19 +439,12 @@ def ls_complete_form(driver, tab_handle, submit):
     return
 
 
-def ls_apply():
-    driver = webdriver.Chrome(CHROME_DRIVER)
-    chrome_options = webdriver.ChromeOptions()
-    chrome_options.add_argument("--disable-popup-blocking")
-    chrome_options.add_argument('--disable-notifications')
-    chrome_options.add_argument("--mute-audio")
-
-    driver.maximize_window()
+def ls_apply(driver):
     driver.get("http://reservation.livingscience.ch/wohnen")
     # driver.execute_script('''window.open("http://reservation.livingscience.ch/wohnen","_blank");''')
 
     try:
-        ls_complete_form(driver, driver.window_handles[0], False)
+        ls_complete_form(driver, False)
         # ls_complete_form(driver, driver.window_handles[1], True)
     except NoSuchElementException:
         driver.close()
@@ -490,6 +498,13 @@ def main():
         None,
         webbrowser.BackgroundBrowser("C://Program Files//Google//Chrome//Application//chrome.exe"))
 
+    driver = webdriver.Chrome(CHROME_DRIVER)
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_argument("--disable-popup-blocking")
+    chrome_options.add_argument('--disable-notifications')
+    chrome_options.add_argument("--mute-audio")
+    driver.maximize_window()
+
     found = []
 
     while(True):
@@ -499,7 +514,7 @@ def main():
             id = get_ls_ids(out_content[0])
             if id == "" or id not in found:
                 notify(LS)
-                ls_apply()
+                ls_apply(driver)
                 write_to_file(out_content[0], "data/living_science_src_" + datetime.now().strftime("%d-%m-%Y_%H-%M-%S"), "html")
                 found.extend([id])
             else:
