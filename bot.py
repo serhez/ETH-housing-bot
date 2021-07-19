@@ -521,9 +521,9 @@ def main():
                 print("Did not notify/apply to a room that already was found")
 
         # Student Village (SV)
-        out_content = []
-        if is_sv_available(out_content):
-            notify(SV)
+        # out_content = []
+        # if is_sv_available(out_content):
+            # notify(SV)
 
         time.sleep(CHECK_FREQUENCY)
 
