@@ -505,20 +505,23 @@ def main():
     chrome_options.add_argument("--mute-audio")
     driver.maximize_window()
 
-    found = []
+    # found = []
 
     while(True):
         # Living Science (LS)
         out_content = []
         if is_ls_available(out_content):
-            id = get_ls_ids(out_content[0])
-            if id == "" or id not in found:
-                notify(LS)
-                ls_apply(driver)
+            # id = get_ls_ids(out_content[0])
+            # if id == "" or id not in found:
+            notify(LS)
+            ls_apply(driver)
+            try:
                 write_to_file(out_content[0], "data/living_science_src_" + datetime.now().strftime("%d-%m-%Y_%H-%M-%S"), "html")
-                found.extend([id])
-            else:
-                print("Did not notify/apply to a room that already was found")
+            except:
+                print("Could not write to file")
+            # found.extend([id])
+            # else:
+                # print("Did not notify/apply to a room that already was found")
 
         # Student Village (SV)
         # out_content = []
