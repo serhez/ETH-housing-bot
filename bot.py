@@ -35,6 +35,8 @@ PUSHOVER_USER_KEY = "uez8re7h4fz7t9t3fze12ag5gorpyy"
 def is_ls_available(out_content):
     # Method 1
     content = requests.get(url=URLS[LS], params=None).content.decode("utf-8")
+    if re.search("Connection timed out", content):
+        return False
     if not re.search("nodata", content) or not re.search("No record available", content) or re.search("row status", content):
         out_content.append(content)
         return True
