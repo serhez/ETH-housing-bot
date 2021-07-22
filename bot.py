@@ -3,6 +3,7 @@ import re
 import time
 from datetime import datetime
 import platform
+import threading
 import requests
 import urllib.request
 import webbrowser
@@ -490,9 +491,12 @@ def download_file(url, filename, extension):
 
 
 def write_to_file(content, filename, extension):
-    file = open(filename + "." + extension, "w")
-    file.write(content)
-    file.close()
+    try:
+        file = open(filename + "." + extension, "w")
+        file.write(content)
+        file.close()
+    except:
+        print("Could not write to file")
 
 
 def main():
@@ -515,12 +519,14 @@ def main():
         if is_ls_available(out_content):
             # id = get_ls_ids(out_content[0])
             # if id == "" or id not in found:
+            try:
+                thread = threading.Thread(target=write_to_file, args=(out_content[0], "data/living_science_src_" + datetime.now().strftime("%d-%m-%Y_%H-%M-%S"), "html",), daemon=True)
+                thread.start()
+            except:
+                print("Could not run thread to save the src to file")
             notify(LS)
             ls_apply(driver)
-            try:
-                write_to_file(out_content[0], "data/living_science_src_" + datetime.now().strftime("%d-%m-%Y_%H-%M-%S"), "html")
-            except:
-                print("Could not write to file")
+            # write_to_file(out_content[0], "data/living_science_src_" + datetime.now().strftime("%d-%m-%Y_%H-%M-%S"), "html")
             # found.extend([id])
             # else:
                 # print("Did not notify/apply to a room that already was found")
